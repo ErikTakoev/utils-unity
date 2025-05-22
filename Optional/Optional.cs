@@ -9,6 +9,7 @@ namespace Utils
     [System.Serializable]
     public class Optional<T> : ISerializationCallbackReceiver where T : new()
     {
+
         public bool Enabled = false;
         public T Value;
 

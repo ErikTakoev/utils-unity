@@ -8,6 +8,7 @@ namespace Utils
     [CustomPropertyDrawer(typeof(Optional<>), true)]
     public class OptionalPropertyDrawer : PropertyDrawer
     {
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             SerializedProperty enabledProp = property.FindPropertyRelative("Enabled");
@@ -20,8 +21,16 @@ namespace Utils
             }
 
             Rect toggleRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
-            enabledProp.boolValue = EditorGUI.ToggleLeft(toggleRect, label, enabledProp.boolValue);
+            // Handle mixed values state properly
+            EditorGUI.BeginProperty(toggleRect, label, property);
+            EditorGUI.showMixedValue = enabledProp.hasMultipleDifferentValues;
 
+            // Using EditorGUI.PropertyField for better multi-object support
+            EditorGUI.PropertyField(toggleRect, enabledProp, label);
+            EditorGUI.showMixedValue = false;
+            EditorGUI.EndProperty();
+
+            // Only show fields if enabled
             if (enabledProp.boolValue)
             {
                 EditorGUI.indentLevel++;
