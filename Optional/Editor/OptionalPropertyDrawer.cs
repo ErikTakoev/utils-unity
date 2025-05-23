@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Utils
+namespace Utils.Editor
 {
 
     [CustomPropertyDrawer(typeof(Optional<>), true)]

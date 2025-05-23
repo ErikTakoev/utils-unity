@@ -1,8 +1,12 @@
 {
-    "name": "Utils",
+    "name": "Utils.Editor",
     "rootNamespace": "",
-    "references": [],
-    "includePlatforms": [],
+    "references": [
+        "GUID:074a85c6c89d8914c8a5f5108bd34bda"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
