@@ -63,6 +63,18 @@ namespace Utils
                             continue; // Skip this type
                         }
 
+                        // Skip types that inherit from MulticastDelegate (delegates)
+                        if (type.BaseType?.Name == "MulticastDelegate")
+                        {
+                            continue; // Skip delegates
+                        }
+
+                        // Skip nested/inner classes
+                        if (type.IsNested)
+                        {
+                            continue; // Skip nested classes
+                        }
+
                         // Filter by namespace if needed
                         if (type.Namespace != null && namespaceFilters.Any(filter => type.Namespace.StartsWith(filter)))
                         {
