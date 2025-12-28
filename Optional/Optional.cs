@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-namespace Utils
+namespace Expecto
 {
 	// <summary>
 	// Optional is a generic class that can be used to represent an optional value.
