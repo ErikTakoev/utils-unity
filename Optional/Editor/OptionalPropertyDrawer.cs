@@ -32,8 +32,26 @@ namespace Expecto.Editor
 			// Only show fields if enabled
 			if (enabledProp.boolValue)
 			{
-				Rect valueRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing, position.width, EditorGUI.GetPropertyHeight(valueProp));
-				EditorGUI.PropertyField(valueRect, valueProp, true);
+				EditorGUI.indentLevel++;
+				float currentY = position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+
+				SerializedProperty iterator = valueProp.Copy();
+				SerializedProperty endProperty = iterator.GetEndProperty();
+
+				bool enterChildren = true;
+				while (iterator.NextVisible(enterChildren))
+				{
+					if (SerializedProperty.EqualContents(iterator, endProperty))
+						break;
+
+					float propHeight = EditorGUI.GetPropertyHeight(iterator, true);
+					Rect valueRect = new Rect(position.x, currentY, position.width, propHeight);
+					EditorGUI.PropertyField(valueRect, iterator, true);
+
+					currentY += propHeight + EditorGUIUtility.standardVerticalSpacing;
+					enterChildren = false;
+				}
+				EditorGUI.indentLevel--;
 			}
 
 			EditorGUI.EndProperty();
@@ -48,7 +66,18 @@ namespace Expecto.Editor
 
 			if (enabledProp != null && enabledProp.boolValue && valueProp != null)
 			{
-				height += EditorGUI.GetPropertyHeight(valueProp) + EditorGUIUtility.standardVerticalSpacing;
+				SerializedProperty iterator = valueProp.Copy();
+				SerializedProperty endProperty = iterator.GetEndProperty();
+
+				bool enterChildren = true;
+				while (iterator.NextVisible(enterChildren))
+				{
+					if (SerializedProperty.EqualContents(iterator, endProperty))
+						break;
+
+					height += EditorGUI.GetPropertyHeight(iterator, true) + EditorGUIUtility.standardVerticalSpacing;
+					enterChildren = false;
+				}
 			}
 
 			return height;
