@@ -20,48 +20,23 @@ namespace Expecto.Editor
 				return;
 			}
 
-			Rect toggleRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
-			// Handle mixed values state properly
-			EditorGUI.BeginProperty(toggleRect, label, property);
-			EditorGUI.showMixedValue = enabledProp.hasMultipleDifferentValues;
+			EditorGUI.BeginProperty(position, label, property);
 
-			// Using EditorGUI.PropertyField for better multi-object support
+			Rect toggleRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
+
+			// Handle mixed values state properly
+			EditorGUI.showMixedValue = enabledProp.hasMultipleDifferentValues;
 			EditorGUI.PropertyField(toggleRect, enabledProp, label);
 			EditorGUI.showMixedValue = false;
-			EditorGUI.EndProperty();
 
 			// Only show fields if enabled
 			if (enabledProp.boolValue)
 			{
-				EditorGUI.indentLevel++;
-				foreach (var child in GetChildren(valueProp))
-				{
-					EditorGUILayout.PropertyField(child, true);
-				}
-				EditorGUI.indentLevel--;
-			}
-		}
-
-		List<SerializedProperty> GetChildren(SerializedProperty property)
-		{
-			List<SerializedProperty> children = new List<SerializedProperty>();
-
-			SerializedProperty iterator = property.Copy();
-			SerializedProperty endProperty = iterator.GetEndProperty();
-
-
-			while (!SerializedProperty.EqualContents(iterator, endProperty))
-			{
-				if (iterator.depth == property.depth + 1)
-				{
-					children.Add(iterator.Copy());
-				}
-
-				if (!iterator.NextVisible(true))
-					break;
+				Rect valueRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing, position.width, EditorGUI.GetPropertyHeight(valueProp));
+				EditorGUI.PropertyField(valueRect, valueProp, true);
 			}
 
-			return children;
+			EditorGUI.EndProperty();
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -69,12 +44,14 @@ namespace Expecto.Editor
 			SerializedProperty enabledProp = property.FindPropertyRelative("Enabled");
 			SerializedProperty valueProp = property.FindPropertyRelative("Value");
 
+			float height = EditorGUIUtility.singleLineHeight;
+
 			if (enabledProp != null && enabledProp.boolValue && valueProp != null)
 			{
-				return base.GetPropertyHeight(property, label);
+				height += EditorGUI.GetPropertyHeight(valueProp) + EditorGUIUtility.standardVerticalSpacing;
 			}
 
-			return EditorGUIUtility.singleLineHeight;
+			return height;
 		}
 	}
 }
